@@ -2,17 +2,12 @@
 
 namespace GameSystems.Entity
 {
-    public class Entity : IEntity
+    public class Character : ICharacter
     {
         public Guid Id { get; }
         public string Name { get; }
-        public string Faction { get; }
-        public int Speed { get; }
-        public bool IsDead { get; }
 
-        public event EventHandler TurnEnded;
-
-        public Entity(Guid id, string name, string faction, MapPosition mapPosition = default)
+        public Character(Guid id, string name, string faction, MapPosition mapPosition = default)
         {
             Id = id;
             Name = name;
@@ -39,5 +34,16 @@ namespace GameSystems.Entity
         }
 
         #endregion ICanMove
+
+        #region ITakeTurn
+
+        public string Faction { get; }
+        public bool IsDead { get; }
+        public int Speed { get; }
+
+        public event EventHandler TurnEnded;
+
+
+        #endregion ITakeTurn
     }
 }

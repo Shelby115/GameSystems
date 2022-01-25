@@ -4,7 +4,7 @@ namespace GameSystems.Game
 {
     public interface IEncounter
     {
-        IEnumerable<IEntity> Members { get; }
+        IEnumerable<ITakeTurn> Members { get; }
         string PlayerFaction { get; }
         ITurnQueue TurnQueue { get; }
 

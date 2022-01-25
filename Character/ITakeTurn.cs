@@ -1,9 +1,7 @@
 ﻿namespace GameSystems.Entity
 {
-    public interface IEntity : ICanMove
+    public interface ITakeTurn
     {
-        public Guid Id { get; }
-        public string Name { get; }
         public string Faction { get; }
         public bool IsDead { get; }
         public int Speed { get; }

@@ -4,12 +4,12 @@ namespace GameSystems.Game
 {
     public class TurnEventArgs : EventArgs
     {
-        public IEntity Member { get; }
+        public ITakeTurn TurnTaker { get; }
         public int RoundCount { get; }
 
-        public TurnEventArgs(IEntity member, int roundCount)
+        public TurnEventArgs(ITakeTurn turnTaker, int roundCount)
         {
-            Member = member;
+            TurnTaker = turnTaker;
             RoundCount = roundCount;    
         }
     }
