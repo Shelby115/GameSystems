@@ -1,11 +1,18 @@
-﻿namespace GameSystems.Map
+﻿using GameSystems.Entity;
+
+namespace GameSystems.Map
 {
     public class Map : IMap
     {
         public int Width { get; }
         public int Depth { get; }
         public int Height { get; }
-        public MapPosition[,,] Position { get; }
+        public MapPositionInfo[,,] Positions { get; }
+        public IEnumerable<ICanMove> Members { get; }
+        public IDictionary<ICanMove, MapPositionInfo> MemberPositions { get; }
+
+        public event MoveEventHandler BeforeMove;
+        public event MoveEventHandler AfterMove;
 
         private readonly float MapPositionWidth;
         private readonly float MapPositionDepth;
@@ -21,8 +28,11 @@
         /// <param name="mapPositionWidth">The width in game of a single map position (i.e. tile). Used for converting between map coordinates and game coordinates.</param>
         /// <param name="mapPositionDepth">The depth in game of a single map position (i.e. tile). Used for converting between map coordinates and game coordinates.</param>
         /// <param name="mapPositionHeight">The height in game of a single map position (i.e. tile). Used for converting between map coordinates and game coordinates.</param>
-        public Map(int width, int depth, int height, float mapPositionWidth, float mapPositionDepth, float mapPositionHeight)
+        public Map(IEnumerable<ICanMove> members, int width, int depth, int height, float mapPositionWidth, float mapPositionDepth, float mapPositionHeight)
         {
+            Members = members;
+            MemberPositions = new Dictionary<ICanMove, MapPositionInfo>();
+
             Width = width;
             Depth = depth;
             Height = height;
@@ -31,17 +41,42 @@
             MapPositionDepth = mapPositionDepth;
             MapPositionHeight = mapPositionHeight;
 
-            Position = new MapPosition[width, depth, height];
+            Positions = new MapPositionInfo[width, depth, height];
             for (int x = 0; x < Width; x++)
             {
                for (int y = 0; y < Depth; y++)
                 {
                     for (int z = 0; z < Height; z++)
                     {
-                        Position[x, y, z] = new MapPosition(x, y, z);
+                        Positions[x, y, z] = new MapPositionInfo(x, y, z);
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Teleports the mover to the specified map position.
+        /// Does not fire any events.
+        /// </summary>
+        /// <param name="mover">Character being moved.</param>
+        /// <param name="position">Position they are going.</param>
+        public void SetPosition(ICanMove mover, MapPositionInfo position)
+        {
+            MemberPositions[mover] = position;
+        }
+
+        /// <summary>
+        /// Moves the character to the specified map position and fired move events.
+        /// </summary>
+        /// <param name="mover">Character that is being moved.</param>
+        /// <param name="position">Position they are going.</param>
+        public void Move(ICanMove mover, MapPositionInfo position)
+        {
+            if (mover.MaxMoveDistance < MemberPositions[mover].DistanceFrom(position)) { return; }
+            var moveArgs = new MoveEventArgs(MemberPositions[mover], position);
+            BeforeMove?.Invoke(mover, moveArgs);
+            MemberPositions[mover] = position;
+            AfterMove?.Invoke(mover, moveArgs);
         }
 
         /// <summary>
@@ -49,7 +84,7 @@
         /// </summary>
         /// <param name="mapPosition">Map coordinates to be converted.</param>
         /// <returns>A tuple of game coordinates.</returns>
-        public (float x, float y, float z) ConvertFromMapPosition(MapPosition mapPosition)
+        public (float x, float y, float z) ConvertFromMapPosition(MapPositionInfo mapPosition)
         {
             return (
                 x: mapPosition.X * MapPositionWidth,
@@ -65,9 +100,9 @@
         /// <param name="y">Game position y coordinates.</param>
         /// <param name="z">Game position z coordinates.</param>
         /// <returns>A MapPosition coordinate object.</returns>
-        public MapPosition ConvertToMapPosition(float x, float y, float z)
+        public MapPositionInfo ConvertToMapPosition(float x, float y, float z)
         {
-            return new MapPosition(
+            return new MapPositionInfo(
                 x: Convert.ToInt32(x / MapPositionWidth),
                 y: Convert.ToInt32(y / MapPositionDepth),
                 z: Convert.ToInt32(z / MapPositionHeight)

@@ -1,6 +1,6 @@
 ﻿namespace GameSystems.Entity
 {
-    public interface ICharacter : ICanMove, ITakeTurn
+    public interface ICharacter
     {
         public Guid Id { get; }
         public string Name { get; }
