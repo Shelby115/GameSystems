@@ -1,6 +1,6 @@
 ﻿namespace GameSystems.Entity
 {
-    public class Character : ICharacter, ICanMove, ITakeTurn
+    public class Character : ICharacter, ICanMove, ITakeTurns
     {
         #region ICharacter
 

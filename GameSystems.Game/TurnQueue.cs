@@ -4,12 +4,12 @@ namespace GameSystems.Game
 {
     public class TurnQueue : ITurnQueue
     {
-        private readonly IEnumerable<ITakeTurn> Members;
-        private readonly Queue<ITakeTurn> CurrentQueue;
+        private readonly IEnumerable<ITakeTurns> Members;
+        private readonly Queue<ITakeTurns> CurrentQueue;
 
         public int RoundCount { get; private set; }
 
-        private ITakeTurn CurrentTurnTaker;
+        private ITakeTurns CurrentTurnTaker;
 
         public event EventHandler<TurnEventArgs> RoundStart;
         public event EventHandler<TurnEventArgs> RoundEnd;
@@ -17,10 +17,10 @@ namespace GameSystems.Game
         public event EventHandler<TurnEventArgs> TurnStart;
         public event EventHandler<TurnEventArgs> TurnEnd;
 
-        public TurnQueue(IEnumerable<ITakeTurn> members)
+        public TurnQueue(IEnumerable<ITakeTurns> members)
         {
             Members = members;
-            CurrentQueue = new Queue<ITakeTurn>();
+            CurrentQueue = new Queue<ITakeTurns>();
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace GameSystems.Game
         /// <param name="sender">The entity whose turn just ended.</param>
         private void ListenForEntityTurnEnded(object? sender, EventArgs e)
         {
-            var turnTaker = sender as ITakeTurn;
+            var turnTaker = sender as ITakeTurns;
             if (turnTaker == CurrentTurnTaker)
             {
                 StartNextTurn();
@@ -40,7 +40,7 @@ namespace GameSystems.Game
         /// Factions are ordered by their members' aggregate speed stat, then each faction member is ordered within the faction by their speed stat for overall turn order.
         /// </summary>
         /// <returns>The turn queue for the next round given current entity status (i.e. IsDead, Speed, and Faction).</returns>
-        private IEnumerable<ITakeTurn> GetMemberTurnOrderForNextRound()
+        private IEnumerable<ITakeTurns> GetMemberTurnOrderForNextRound()
         {
             return Members
                 .Where(x => x.IsDead == false)

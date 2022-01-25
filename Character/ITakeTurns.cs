@@ -1,6 +1,6 @@
 ﻿namespace GameSystems.Entity
 {
-    public interface ITakeTurn
+    public interface ITakeTurns
     {
         public string Faction { get; }
         public bool IsDead { get; }

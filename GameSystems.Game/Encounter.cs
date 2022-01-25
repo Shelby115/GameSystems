@@ -5,13 +5,13 @@ namespace GameSystems.Game
     public class Encounter : IEncounter
     {
         public string PlayerFaction { get; }
-        public IEnumerable<ITakeTurn> Members { get; }
+        public IEnumerable<ITakeTurns> Members { get; }
 
         public ITurnQueue TurnQueue { get; }
         public event EventHandler<EncounterEventArgs> EncounterStarted;
         public event EventHandler<EncounterEventArgs> EncounterEnded;
 
-        public Encounter(string playerFaction, IEnumerable<ITakeTurn> members)
+        public Encounter(string playerFaction, IEnumerable<ITakeTurns> members)
         {
             PlayerFaction = playerFaction;
             Members = members;
