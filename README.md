@@ -1,14 +1,15 @@
 # GameSystems
 A collection of coded game systems abstract from any game engines. Generally this has been designed with a turn-based strategy game in mind.
 
-## GameSystems.Map
+## Dependencies and Interfaces
+Where possible, the systems should make use of interfaces defined in the GameSystems.Character project. This means that the GameSystems.Character project should not depend on the other projects, but the other projects like Game and Map should depend on the Character project.
 
-The map is designed to be a coordinate grid with integer coordinates, but acknowledges the fact that game engine coordinates are going to be float and provides the ability to convert between the two coordinate systems.
-All logic internal to this project/solution will use the map's integer coordinate system and the conversion functions will exist for visuals and other effects (e.g. Unity game object positions within scenes).
+Examples:
+1. The GameSystems.Map project depends on the GameSystems.Character project for its ICanMove interface. The move logic is entirely contained inside the GameSystems.Map project.
+2. The GameSystems.Encounter project depends on the GameSystems.Character project for its ITakeTurn interface. The turn logic is entirely contained inside the GameSystems.Encounter project.
 
-## GameSystems.Game 
+## Projects & Systems
+Generally, I will use these two terms interchangably because I'm thinking there should be one project per system, but we'll see how that goes as I add more to this solution.
 
-Contains the logic for the game's flow (e.g. encounters and turn queue).
-Specific interfaces are used for interacting with specific systems, for example:
-1. ITakeTurn is used for interacting with the Encounter and TurnQueue system.
-2. ICanMove is used for interacting with the map system.
+1. GameSystems.Map contains all the logic for the map, grid system, and movement. It depends on the ICanMove interface for determining basics like a character's max move distance.
+2. GameSystems.Encounter contains all the logic for encounters (i.e. battles). It depends on the ITakeTurns interface for determining basics like death status, their faction, and the speed of a character.
