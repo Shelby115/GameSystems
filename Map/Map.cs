@@ -11,8 +11,8 @@ namespace GameSystems.Map
         public IEnumerable<ICanMove> Members { get; }
         public IDictionary<ICanMove, MapPositionInfo> MemberPositions { get; }
 
-        public event MoveEventHandler BeforeMove;
-        public event MoveEventHandler AfterMove;
+        public event MoveEventHandler? BeforeMove;
+        public event MoveEventHandler? AfterMove;
 
         private readonly float MapPositionWidth;
         private readonly float MapPositionDepth;
@@ -73,7 +73,7 @@ namespace GameSystems.Map
         public void Move(ICanMove mover, MapPositionInfo position)
         {
             if (mover.MaxMoveDistance < MemberPositions[mover].DistanceFrom(position)) { return; }
-            var moveArgs = new MoveEventArgs(MemberPositions[mover], position);
+            var moveArgs = new MoveEventArgs(MemberPositions[mover], position, isDestination: true);
             BeforeMove?.Invoke(mover, moveArgs);
             MemberPositions[mover] = position;
             AfterMove?.Invoke(mover, moveArgs);

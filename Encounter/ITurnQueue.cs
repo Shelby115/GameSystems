@@ -5,10 +5,10 @@ namespace GameSystems.Game
     {
         int RoundCount { get; }
 
-        event EventHandler<TurnEventArgs> RoundEnd;
-        event EventHandler<TurnEventArgs> RoundStart;
-        event EventHandler<TurnEventArgs> TurnEnd;
-        event EventHandler<TurnEventArgs> TurnStart;
+        event EventHandler<TurnEventArgs>? RoundEnd;
+        event EventHandler<TurnEventArgs>? RoundStart;
+        event EventHandler<TurnEventArgs>? TurnEnd;
+        event EventHandler<TurnEventArgs>? TurnStart;
 
         void StartNextTurn();
     }

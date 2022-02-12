@@ -22,7 +22,7 @@
         public bool IsDead { get; }
         public int Speed { get; }
 
-        public event EventHandler TurnEnded;
+        public event EventHandler? TurnEnded;
 
 
         #endregion ITakeTurn

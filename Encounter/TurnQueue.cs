@@ -9,13 +9,13 @@ namespace GameSystems.Game
 
         public int RoundCount { get; private set; }
 
-        private ITakeTurns CurrentTurnTaker;
+        private ITakeTurns? CurrentTurnTaker;
 
-        public event EventHandler<TurnEventArgs> RoundStart;
-        public event EventHandler<TurnEventArgs> RoundEnd;
+        public event EventHandler<TurnEventArgs>? RoundStart;
+        public event EventHandler<TurnEventArgs>? RoundEnd;
 
-        public event EventHandler<TurnEventArgs> TurnStart;
-        public event EventHandler<TurnEventArgs> TurnEnd;
+        public event EventHandler<TurnEventArgs>? TurnStart;
+        public event EventHandler<TurnEventArgs>? TurnEnd;
 
         public TurnQueue(IEnumerable<ITakeTurns> members)
         {

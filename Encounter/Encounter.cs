@@ -8,8 +8,8 @@ namespace GameSystems.Game
         public IEnumerable<ITakeTurns> Members { get; }
 
         public ITurnQueue TurnQueue { get; }
-        public event EventHandler<EncounterEventArgs> EncounterStarted;
-        public event EventHandler<EncounterEventArgs> EncounterEnded;
+        public event EventHandler<EncounterEventArgs>? EncounterStarted;
+        public event EventHandler<EncounterEventArgs>? EncounterEnded;
 
         public Encounter(string playerFaction, IEnumerable<ITakeTurns> members)
         {

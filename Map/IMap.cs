@@ -11,6 +11,9 @@ namespace GameSystems.Map
         public IEnumerable<ICanMove> Members { get; }
         public IDictionary<ICanMove, MapPositionInfo> MemberPositions { get; }
 
+        public event MoveEventHandler? BeforeMove;
+        public event MoveEventHandler? AfterMove;
+
         /// <summary>
         /// Teleports the mover to the specified map position.
         /// Does not fire any events.

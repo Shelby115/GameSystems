@@ -8,8 +8,8 @@ namespace GameSystems.Game
         string PlayerFaction { get; }
         ITurnQueue TurnQueue { get; }
 
-        event EventHandler<EncounterEventArgs> EncounterEnded;
-        event EventHandler<EncounterEventArgs> EncounterStarted;
+        event EventHandler<EncounterEventArgs>? EncounterEnded;
+        event EventHandler<EncounterEventArgs>? EncounterStarted;
 
         bool HasLost();
         bool HasWon();
