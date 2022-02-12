@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameSystems.Map", "Map\Game
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameSystems.Character", "Character\GameSystems.Character.csproj", "{B4D347B7-BF97-4EA8-9F8C-D30A0C7570DA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameSystems.Encounter", "GameSystems.Game\GameSystems.Encounter.csproj", "{76CA3E64-C873-4B25-A5D0-DC1DC2896A19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameSystems.Encounter", "Encounter\GameSystems.Encounter.csproj", "{76CA3E64-C873-4B25-A5D0-DC1DC2896A19}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
