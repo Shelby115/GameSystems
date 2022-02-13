@@ -1,4 +1,4 @@
-﻿namespace GameSystems.Entity
+﻿namespace GameSystems.Character
 {
     public interface ICharacter
     {

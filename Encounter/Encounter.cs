@@ -1,4 +1,4 @@
-﻿using GameSystems.Entity;
+﻿using GameSystems.Character;
 
 namespace GameSystems.Game
 {

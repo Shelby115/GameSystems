@@ -1,6 +1,6 @@
-﻿using GameSystems.Map;
+﻿using GameSystems.Character;
 
-namespace GameSystems.Entity
+namespace GameSystems.Map
 {
     public delegate void MoveEventHandler(ICanMove mover, MoveEventArgs e);
     public class MoveEventArgs : EventArgs
