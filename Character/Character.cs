@@ -21,10 +21,12 @@
             if (target == null) { return; }
             if (AttackDamage <= 0) { return; }
 
-            var damage = AttackDamage;
-            var attackArgs = new AttackArgs(this, target, damage);
+            var preAmplifiedDamage = AttackDamage;
+            // TODO: Create and implement a system for applying damage bonuses.
+            var postAmplifiedDamage = preAmplifiedDamage;
+            var attackArgs = new AttackArgs(this, target, postAmplifiedDamage);
             BeforeAttack?.Invoke(this, attackArgs);
-            target.TakeDamage(this, damage);
+            target.TakeDamage(this, postAmplifiedDamage);
             AfterAttack?.Invoke(this, attackArgs);
         }
 
@@ -40,16 +42,19 @@
         public event EventHandler<AttackArgs>? BeforeDeath;
         public event EventHandler<AttackArgs>? AfterDeath;
 
-        public void TakeDamage(ICanAttack attacker, int damage)
+        public void TakeDamage(ICanAttack attacker, int preMitigationDamage)
         {
             if (attacker == null) { return; }
-            if (damage <= 0) { return; }
+            if (preMitigationDamage <= 0) { return; }
             if (CurrentHealth <= 0) { return; }
 
-            var attackArgs = new AttackArgs(attacker, this, damage);
+            // TODO: Create and implement a system for apply damage mitigation bonuses.
+
+            var postMitigationDamage = preMitigationDamage;
+            var attackArgs = new AttackArgs(attacker, this, postMitigationDamage);
             BeforeAttacked?.Invoke(this, attackArgs);
-            if (CurrentHealth <= damage) { BeforeDeath?.Invoke(this, attackArgs); }
-            CurrentHealth = Math.Min(0, CurrentHealth - damage);
+            if (CurrentHealth <= postMitigationDamage) { BeforeDeath?.Invoke(this, attackArgs); }
+            CurrentHealth = Math.Min(0, CurrentHealth - postMitigationDamage);
             AfterAttacked?.Invoke(this, attackArgs);
             if (CurrentHealth <= 0) { AfterDeath?.Invoke(this, attackArgs); }
         }
