@@ -1,5 +1,5 @@
 # GameSystems
-A collection of coded game systems abstract from any game engines. Generally this has been designed with a turn-based strategy game in mind.
+A collection of coded game systems abstract from any game engines designed with a turn-based strategy game in mind.
 
 
 ## Projects & Systems
