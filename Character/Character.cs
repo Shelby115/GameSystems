@@ -6,16 +6,16 @@
 
         public Guid Id { get; }
         public string Name { get; }
-        public IDictionary<string, int> Attributes { get; }
+        public Attributes Attributes { get; }
 
         #endregion ICharacter
 
-        public Character(Guid id, string name, string faction, IDictionary<string, int>? attributes = null)
+        public Character(Guid id, string name, string faction, Attributes? attributes = null)
         {
             Id = id;
             Name = name;
             Faction = faction;
-            Attributes = attributes ?? new Dictionary<string, int>();
+            Attributes = attributes ?? new Attributes();
         }
 
         #region ICanAttack
