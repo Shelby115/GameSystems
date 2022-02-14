@@ -6,12 +6,21 @@
 
         public Guid Id { get; }
         public string Name { get; }
+        public IDictionary<string, int> Attributes { get; }
 
         #endregion ICharacter
 
+        public Character(Guid id, string name, string faction, IDictionary<string, int>? attributes = null)
+        {
+            Id = id;
+            Name = name;
+            Faction = faction;
+            Attributes = attributes ?? new Dictionary<string, int>();
+        }
+
         #region ICanAttack
 
-        public int AttackDamage { get; private set; }
+        public int AttackDamage { get => Attributes["AttackDamage"]; private set => Attributes["AttackDamage"] = value; }
 
         public event EventHandler<AttackArgs>? BeforeAttack;
         public event EventHandler<AttackArgs>? AfterAttack;
@@ -34,8 +43,8 @@
 
         #region ICanBeAttacked
 
-        public int CurrentHealth { get; private set; }
-        public int MaxHealth { get; private set; }
+        public int CurrentHealth { get => Attributes["CurrentHealth"]; private set => Attributes["CurrentHealth"] = value; }
+        public int MaxHealth { get => Attributes["MaxHealth"]; private set => Attributes["MaxHealth"] = value; }
 
         public event EventHandler<AttackArgs>? BeforeAttacked;
         public event EventHandler<AttackArgs>? AfterAttacked;
@@ -63,7 +72,7 @@
 
         #region ICanMove
 
-        public int MaxMoveDistance { get; protected set; }
+        public int MaxMoveDistance { get => Attributes["MaxMoveDistance"]; private set => Attributes["MaxMoveDistance"] = value; }
 
 
         #endregion ICanMove
@@ -71,19 +80,12 @@
         #region ITakeTurn
 
         public string Faction { get; }
-        public bool IsDead { get; }
-        public int Speed { get; }
+        public bool IsDead => CurrentHealth <= 0;
+        public int Speed { get => Attributes["Speed"]; private set => Attributes["Speed"] = value; }
 
         public event EventHandler? TurnEnded;
 
 
         #endregion ITakeTurn
-
-        public Character(Guid id, string name, string faction)
-        {
-            Id = id;
-            Name = name;
-            Faction = faction;
-        }
     }
 }
