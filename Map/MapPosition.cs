@@ -1,19 +1,19 @@
 ﻿namespace GameSystems.Map
 {
-    public struct MapPositionInfo
+    public struct MapPosition
     {
         public int X { get; }
         public int Y { get; }
         public int Z { get; }
 
-        public MapPositionInfo(int x, int y, int z)
+        public MapPosition(int x, int y, int z)
         {
             X = x;
             Y = y;
             Z = z;
         }
-        
-        public int DistanceFrom(MapPositionInfo mapPosition)
+
+        public int DistanceFrom(MapPosition mapPosition)
         {
             var xDiff = mapPosition.X - X;
             var yDiff = mapPosition.Y - Y;

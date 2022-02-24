@@ -9,13 +9,13 @@ namespace GameSystems.Map
         /// BeforeMove: Where the mover is currently.
         /// AfterMove: Where the mover is going.
         /// </summary>
-        public MapPositionInfo OldPosition { get; }
+        public MapPosition OldPosition { get; }
 
         /// <summary>
         /// BeforeMove: Where the mover was before moving.
         /// AfterMove: Where the mover is currently.
         /// </summary>
-        public MapPositionInfo NewPosition { get; }
+        public MapPosition NewPosition { get; }
 
         /// <summary>
         /// Is the new position the mover's end destination?
@@ -29,7 +29,7 @@ namespace GameSystems.Map
         /// <param name="oldPosition">Before moving this is where the mover is currently. After moving this is where the mover came from.</param>
         /// <param name="newPosition">Before moving this is where the mover is going. After moving this is where the mover is currently.</param>
         /// <param name="isDestination">If this is a position on the way to another, this should be false. If this is the mover's desired location (ending position) this should be true.</param>
-        public MoveEventArgs(MapPositionInfo oldPosition, MapPositionInfo newPosition, bool isDestination)
+        public MoveEventArgs(MapPosition oldPosition, MapPosition newPosition, bool isDestination)
         {
             OldPosition = oldPosition;
             NewPosition = newPosition;

@@ -7,106 +7,91 @@ namespace GameSystems.Map
         public int Width { get; }
         public int Depth { get; }
         public int Height { get; }
-        public MapPositionInfo[,,] Positions { get; }
-        public IEnumerable<ICanMove> Members { get; }
-        public IDictionary<ICanMove, MapPositionInfo> MemberPositions { get; }
+
+        public IEnumerable<MapTile> GetMapTiles() => Tiles.Values;
+        public MapTile GetMapTile(MapPosition position) => Tiles[position];
 
         public event MoveEventHandler? BeforeMove;
         public event MoveEventHandler? AfterMove;
 
-        private readonly float MapPositionWidth;
-        private readonly float MapPositionDepth;
-        private readonly float MapPositionHeight;
+        public event MoveEventHandler? BeforeMemberAdded;
+        public event MoveEventHandler? AfterMemberAdded;
+
+        public event MoveEventHandler? BeforeMemberRemoved;
+        public event MoveEventHandler? AfterMemberRemoved;
+
+        private IDictionary<ICanMove, MapPosition> MemberPositions { get; }
+        private IDictionary<MapPosition, MapTile> Tiles { get; }
 
         /// <summary>
-        /// A game map of specified Width (X), Depth (Y), and Height (Z).
-        /// The map position values are used to convert between game and map coordinates.
+        /// A map with a specified width, height, and depth.
         /// </summary>
-        /// <param name="width">The number of map positions (i.e. tiles) wide the map will be.</param>
-        /// <param name="depth">The number of map positions (i.e. tiles) deep the map will be.</param>
-        /// <param name="height">The number of map positions (i.e. tiles) tall the map will be.</param>
-        /// <param name="mapPositionWidth">The width in game of a single map position (i.e. tile). Used for converting between map coordinates and game coordinates.</param>
-        /// <param name="mapPositionDepth">The depth in game of a single map position (i.e. tile). Used for converting between map coordinates and game coordinates.</param>
-        /// <param name="mapPositionHeight">The height in game of a single map position (i.e. tile). Used for converting between map coordinates and game coordinates.</param>
-        public Map(IEnumerable<ICanMove> members, int width, int depth, int height, float mapPositionWidth, float mapPositionDepth, float mapPositionHeight)
+        /// <param name="width">The number of map tiles wide (X-axis) the map will be.</param>
+        /// <param name="height">The number of map tiles tall (Y-axis) the map will be.</param>
+        /// <param name="depth">The number of map tiles deep (Z-axis) the map will be.</param>
+        /// <param name="mapGenerator">A map generator to populate the map with tiles. You could use a random map generator or create a custom implementation.</param>
+        public Map(int width, int height, int depth, IMapGenerator mapGenerator)
         {
-            Members = members;
-            MemberPositions = new Dictionary<ICanMove, MapPositionInfo>();
-
             Width = width;
             Depth = depth;
             Height = height;
 
-            MapPositionWidth = mapPositionWidth;
-            MapPositionDepth = mapPositionDepth;
-            MapPositionHeight = mapPositionHeight;
+            Tiles = mapGenerator.GenerateMap(width, height, depth);
 
-            Positions = new MapPositionInfo[width, depth, height];
-            for (int x = 0; x < Width; x++)
-            {
-               for (int y = 0; y < Depth; y++)
-                {
-                    for (int z = 0; z < Height; z++)
-                    {
-                        Positions[x, y, z] = new MapPositionInfo(x, y, z);
-                    }
-                }
-            }
+            MemberPositions = new Dictionary<ICanMove, MapPosition>();
+        }
+
+        /// <summary>
+        /// Adds a member to the map at the specified position.
+        /// Triggers the <see cref="BeforeMemberAdded"/> and <see cref="AfterMemberAdded"/> events.
+        /// </summary>
+        /// <param name="member">Member to be added to the map.</param>
+        /// <param name="mapPosition">Position on the map to add the member.</param>
+        public void AddMemberAtPosition(ICanMove member, MapPosition mapPosition)
+        {
+            var args = new MoveEventArgs(mapPosition, mapPosition, true);
+            BeforeMemberAdded?.Invoke(member, args);
+            MemberPositions.Add(member, mapPosition);
+            AfterMemberAdded?.Invoke(member, args);
+        }
+
+        /// <summary>
+        /// Removes a member from the map.
+        /// Triggers the <see cref="BeforeMemberRemoved"/> and <see cref="AfterMemberRemoved"/> events.
+        /// </summary>
+        /// <param name="member">Member to be removed from the map.</param>
+        public void RemoveMember(ICanMove member)
+        {
+            var args = new MoveEventArgs(MemberPositions[member], MemberPositions[member], true);
+            BeforeMemberRemoved?.Invoke(member, args);
+            MemberPositions.Remove(member);
+            AfterMemberRemoved?.Invoke(member, args);
         }
 
         /// <summary>
         /// Teleports the mover to the specified map position.
-        /// Does not fire any events.
+        /// Does not fire any move events.
         /// </summary>
         /// <param name="mover">Character being moved.</param>
         /// <param name="position">Position they are going.</param>
-        public void SetPosition(ICanMove mover, MapPositionInfo position)
+        public void Teleport(ICanMove mover, MapPosition position)
         {
             MemberPositions[mover] = position;
         }
 
         /// <summary>
-        /// Moves the character to the specified map position and fired move events.
+        /// Moves the character to the specified map position.
+        /// Triggers the <see cref="BeforeMove"/> and <see cref="AfterMove"/> events.
         /// </summary>
         /// <param name="mover">Character that is being moved.</param>
         /// <param name="position">Position they are going.</param>
-        public void Move(ICanMove mover, MapPositionInfo position)
+        public void Move(ICanMove mover, MapPosition position)
         {
             if (mover.MaxMoveDistance < MemberPositions[mover].DistanceFrom(position)) { return; }
             var moveArgs = new MoveEventArgs(MemberPositions[mover], position, isDestination: true);
             BeforeMove?.Invoke(mover, moveArgs);
             MemberPositions[mover] = position;
             AfterMove?.Invoke(mover, moveArgs);
-        }
-
-        /// <summary>
-        /// Converts map position coordinates to game position coordinates.
-        /// </summary>
-        /// <param name="mapPosition">Map coordinates to be converted.</param>
-        /// <returns>A tuple of game coordinates.</returns>
-        public (float x, float y, float z) ConvertFromMapPosition(MapPositionInfo mapPosition)
-        {
-            return (
-                x: mapPosition.X * MapPositionWidth,
-                y: mapPosition.Y * MapPositionDepth,
-                z: mapPosition.Z * MapPositionHeight
-            );
-        }
-
-        /// <summary>
-        /// Converts game coordinates to map coordinates.
-        /// </summary>
-        /// <param name="x">Game position x coordinates.</param>
-        /// <param name="y">Game position y coordinates.</param>
-        /// <param name="z">Game position z coordinates.</param>
-        /// <returns>A MapPosition coordinate object.</returns>
-        public MapPositionInfo ConvertToMapPosition(float x, float y, float z)
-        {
-            return new MapPositionInfo(
-                x: Convert.ToInt32(x / MapPositionWidth),
-                y: Convert.ToInt32(y / MapPositionDepth),
-                z: Convert.ToInt32(z / MapPositionHeight)
-            );
         }
     }
 }
